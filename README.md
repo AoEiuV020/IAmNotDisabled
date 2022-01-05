@@ -1,5 +1,7 @@
 # IAmNotDisabled
-使用xposed hook假装自己没有使用无障碍服务，
+使用xposed hook假装自己没有使用无障碍服务，  
+[![CI](https://github.com/AoEiuV020/IAmNotDisabled/actions/workflows/main.yml/badge.svg)](https://github.com/AoEiuV020/IAmNotDisabled/actions/workflows/main.yml)
+[![img](https://img.shields.io/github/v/release/AoEiuV020/IAmNotDisabled.svg?include_prereleases)](https://github.com/AoEiuV020/IAmNotDisabled/releases)
 
 起因：[https://www.v2ex.com/t/826317](https://www.v2ex.com/t/826317)  
 使用无障碍服务会被部分app特殊对待，  
