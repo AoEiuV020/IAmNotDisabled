@@ -1,0 +1,152 @@
+name: CI
+env:
+  TZ: Asia/Shanghai
+
+on:
+  push:
+    paths-ignore:
+      - '/readme/*'
+      - '**/README.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/main.yml'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: init custom env
+        run: |
+          set -a
+          BUILD_NAME="${GITHUB_REPOSITORY#*/}"
+          if [[ ${GITHUB_REF} == refs/tags* ]]
+          then
+              CREATE_RELEASE="true"
+              BUILD_VERSION=${GITHUB_REF#refs/tags/}
+              RELEASE_BODY='### ${{ github.event.head_commit.message }}'
+              TG_CHANGELOG="$RELEASE_BODY"
+          elif [[ ${GITHUB_REF} == refs/pull* ]]
+          then
+              CREATE_RELEASE="false"
+              num=${GITHUB_REF#refs/pull/}
+              num=${num%/merge}
+              BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
+          else
+              CREATE_RELEASE="true"
+              echo PRE_RELEASE="true" >> .custom_env
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
+              TG_CHANGELOG=$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")
+              VERSION_PREFIX='内测版-'
+          fi
+          BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
+          echo BUILD_NAME="$BUILD_NAME" >> .custom_env
+          echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
+          echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+          echo CREATE_RELEASE="$CREATE_RELEASE" >> .custom_env
+          if test -n "$RELEASE_BODY"
+          then
+              echo 'RELEASE_BODY<<EOF' >> .custom_env
+              echo "$RELEASE_BODY" >> .custom_env
+              echo 'EOF' >> .custom_env
+              echo 'UPDATE_BODY<<EOF' >> .custom_env
+              envsubst < template-update.md >> .custom_env
+              echo >> .custom_env
+              echo 'EOF' >> .custom_env
+          fi
+          if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
+          then
+              echo SEND_TELEGRAM="true" >> .custom_env
+          fi
+          cat .custom_env
+          cat .custom_env >> $GITHUB_ENV
+      - name: set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      - name: Build with Gradle
+        run: |
+          ./gradlew :app:assembleRelease
+          ./gradlew :hook:assembleRelease
+      - uses: AoEiuV020/sign-android-release@v2
+        name: Sign app APK
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        if: ${{ env.SIGNING_KEY != '' }}
+        with:
+          releaseDirectory: ./app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - uses: AoEiuV020/sign-android-release@v2
+        name: Sign hook APK
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        if: ${{ env.SIGNING_KEY != '' }}
+        with:
+          releaseDirectory: ./hook/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Build with Gradle
+        run: |
+          find ./app/build/outputs -name '*.apk' -exec mv {} $BUILD_NAME_WITH_VERSION-app.apk \;
+          find ./hook/build/outputs -name '*.apk' -exec mv {} $BUILD_NAME_WITH_VERSION-hook.apk \;
+      - name: Upload APK
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: ${{ env.BUILD_NAME_WITH_VERSION }}*.apk
+      - name: create release
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.BUILD_VERSION }}
+          release_name: ${{ env.BUILD_VERSION }}
+          body: ${{ env.RELEASE_BODY }}
+          draft: true
+          prerelease: ${{ env.PRE_RELEASE == 'true' }}
+      - name: Upload app
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-app.apk
+          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-app.apk
+          asset_content_type: application/zip
+      - name: Upload hook
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-hook.apk
+          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-hook.apk
+          asset_content_type: application/zip
+      - name: public release
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
+      - name: Send commit to telegram
+        if: ${{ env.SEND_TELEGRAM == 'true' }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          disable_web_page_preview: true
+          message: ${{ env.UPDATE_BODY }}
+          document: ${{ env.BUILD_NAME_WITH_VERSION }}-hook.apk
