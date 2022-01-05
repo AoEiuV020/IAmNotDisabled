@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string-array name="xposed_scope">
+        <item>cc.aoeiuv020.iamnotdisabled</item>
+        <item>com.android.chrome</item>
+    </string-array>
+</resources>
