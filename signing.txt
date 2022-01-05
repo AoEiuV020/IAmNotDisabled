@@ -1,0 +1,91 @@
+Alias name: IAmNotDisabled
+Creation date: 2022年1月6日
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=AoEiuV020, OU=IAmNotDisabled, O=AoEiuV020, L=China, ST=China, C=CN
+Issuer: CN=AoEiuV020, OU=IAmNotDisabled, O=AoEiuV020, L=China, ST=China, C=CN
+Serial number: 7b6f250d
+Valid from: Thu Jan 06 02:58:02 CST 2022 until: Mon May 24 02:58:02 CST 2049
+Certificate fingerprints:
+	 SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+	 SHA256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 05 CD E3 EB DD 35 D2 58   E7 E4 FE 2A 37 3A AC F3  .....5.X...*7:..
+0010: 5F 7D E8 1A                                        _...
+]
+]
+
+
+> Task :hook:signingReport
+Variant: debug
+Config: config
+Store: /mnt/wext/code/git/IAmNotDisabled/IAmNotDisabled.jks
+Alias: IAmNotDisabled
+MD5: 44:43:D3:3D:34:46:4C:1B:16:60:91:87:4A:7F:1E:54
+SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+SHA-256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Valid until: Monday, May 24, 2049
+----------
+Variant: release
+Config: config
+Store: /mnt/wext/code/git/IAmNotDisabled/IAmNotDisabled.jks
+Alias: IAmNotDisabled
+MD5: 44:43:D3:3D:34:46:4C:1B:16:60:91:87:4A:7F:1E:54
+SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+SHA-256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Valid until: Monday, May 24, 2049
+----------
+Variant: debugAndroidTest
+Config: config
+Store: /mnt/wext/code/git/IAmNotDisabled/IAmNotDisabled.jks
+Alias: IAmNotDisabled
+MD5: 44:43:D3:3D:34:46:4C:1B:16:60:91:87:4A:7F:1E:54
+SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+SHA-256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Valid until: Monday, May 24, 2049
+----------
+
+> Task :app:signingReport
+Variant: debug
+Config: config
+Store: /mnt/wext/code/git/IAmNotDisabled/IAmNotDisabled.jks
+Alias: IAmNotDisabled
+MD5: 44:43:D3:3D:34:46:4C:1B:16:60:91:87:4A:7F:1E:54
+SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+SHA-256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Valid until: Monday, May 24, 2049
+----------
+Variant: release
+Config: config
+Store: /mnt/wext/code/git/IAmNotDisabled/IAmNotDisabled.jks
+Alias: IAmNotDisabled
+MD5: 44:43:D3:3D:34:46:4C:1B:16:60:91:87:4A:7F:1E:54
+SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+SHA-256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Valid until: Monday, May 24, 2049
+----------
+Variant: debugAndroidTest
+Config: config
+Store: /mnt/wext/code/git/IAmNotDisabled/IAmNotDisabled.jks
+Alias: IAmNotDisabled
+MD5: 44:43:D3:3D:34:46:4C:1B:16:60:91:87:4A:7F:1E:54
+SHA1: 66:ED:5E:E1:AC:D5:4E:F4:50:1C:3C:78:A3:7D:71:59:51:DA:21:7E
+SHA-256: 20:10:77:72:62:57:A8:81:00:50:0A:3D:B5:25:BC:EC:10:69:10:5B:F9:02:C3:F1:F6:F6:9E:C6:26:10:FB:61
+Valid until: Monday, May 24, 2049
+----------
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/7.0.2/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 973ms
+2 actionable tasks: 2 executed

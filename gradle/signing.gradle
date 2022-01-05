@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+android {
+
+// 签名信息从signing.properties中获取，
+// debug和release使用相同签名，以便用debug包覆盖release包从而调试，
+// 如果没有，就会使用默认debug签名，
+    def signingFile = rootProject.file('signing.properties')
+    String sha1 = null
+    if (signingFile.exists()) {
+        def input = signingFile.newInputStream()
+        def p = new Properties()
+        p.load(input)
+        input.close()
+        // 签名文件存在才配置签名，
+        def jks = rootProject.file(p['storeFile'])
+        if (jks.exists()) {
+            signingConfigs {
+                config {
+                    keyAlias p['keyAlias']
+                    keyPassword p['keyPassword']
+                    storeFile jks
+                    storePassword p['storePassword']
+                    v1SigningEnabled true
+                    v2SigningEnabled true
+                }
+            }
+            buildTypes {
+                debug.signingConfig signingConfigs.config
+                release.signingConfig signingConfigs.config
+            }
+            def signingConfig = signingConfigs.config
+            if (signingConfig != null) {
+                //noinspection UnnecessaryQualifiedReference
+                def keyStore = java.security.KeyStore.getInstance(
+                        signingConfig.getStoreType() != null ?
+                                signingConfig.getStoreType() : KeyStore.getDefaultType())
+                FileInputStream fis = new FileInputStream(signingConfig.getStoreFile())
+                keyStore.load(fis, signingConfig.getStorePassword().toCharArray())
+                fis.close()
+                char[] keyPassword = signingConfig.getKeyPassword().toCharArray()
+                //noinspection UnnecessaryQualifiedReference
+                def entry = keyStore.getEntry(
+                        signingConfig.getKeyAlias(),
+                        new java.security.KeyStore.PasswordProtection(keyPassword))
+                if (entry != null) {
+                    //noinspection UnnecessaryQualifiedReference
+                    def digest = java.security.MessageDigest.getInstance("SHA-1")
+                    sha1 = digest.digest(entry.getCertificate().encoded).encodeHex().toString()
+                }
+            }
+        }
+    }
+    if (sha1 == null) {
+        defaultConfig.buildConfigField('String', "SIGNATURE", 'null')
+    } else {
+        defaultConfig.buildConfigField('String', "SIGNATURE", '"' + sha1 + '"')
+    }
+
+}
