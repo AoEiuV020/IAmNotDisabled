@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IAmNotDisabled"
+        android:theme="@android:style/Theme.Light"
         tools:ignore="AllowBackup">
         <meta-data android:name="xposedscope" android:resource="@array/xposed_scope" />
         <meta-data
