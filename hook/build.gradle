@@ -6,7 +6,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "cc.aoeiuv020.xposed.hook"
+        applicationId "cc.aoeiuv020.iamnotdisabled.hook"
         minSdk 26
         targetSdk 32
         versionCode 1

@@ -1,4 +1,4 @@
-package cc.aoeiuv020.xposed.hook;
+package cc.aoeiuv020.iamnotdisabled.hook;
 
 import java.util.Collections;
 
