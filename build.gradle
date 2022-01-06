@@ -1,5 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext {
+        versionCode=1
+        versionName='5.0'
+    }
     repositories {
         google()
         mavenCentral()
