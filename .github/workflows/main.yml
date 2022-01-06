@@ -60,6 +60,10 @@ jobs:
               echo >> .custom_env
               echo 'EOF' >> .custom_env
           fi
+          if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.XPOSED_UPLOAD_TOKEN }}" ]]
+          then
+              echo CREATE_XPOSED_RELEASE="true" >> .custom_env
+          fi
           if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
           then
               echo SEND_TELEGRAM="true" >> .custom_env
@@ -146,11 +150,11 @@ jobs:
           release_id: ${{ steps.create_release.outputs.id }}
 
       - name: create release
-        if: ${{ env.CREATE_RELEASE == 'true' }}
+        if: ${{ env.CREATE_XPOSED_RELEASE == 'true' }}
         id: xposed_create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.XPOSED_UPLOAD_TOKEN }}
         with:
           owner: Xposed-Modules-Repo
           repo: cc.aoeiuv020.iamnotdisabled.hook
@@ -160,30 +164,30 @@ jobs:
           draft: true
           prerelease: ${{ env.PRE_RELEASE == 'true' }}
       - name: Upload app
-        if: ${{ env.CREATE_RELEASE == 'true' }}
+        if: ${{ env.CREATE_XPOSED_RELEASE == 'true' }}
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.XPOSED_UPLOAD_TOKEN }}
         with:
           upload_url: ${{ steps.xposed_create_release.outputs.upload_url }}
           asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-app.apk
           asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-app.apk
           asset_content_type: application/zip
       - name: Upload hook
-        if: ${{ env.CREATE_RELEASE == 'true' }}
+        if: ${{ env.CREATE_XPOSED_RELEASE == 'true' }}
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.XPOSED_UPLOAD_TOKEN }}
         with:
           upload_url: ${{ steps.xposed_create_release.outputs.upload_url }}
           asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-hook.apk
           asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-hook.apk
           asset_content_type: application/zip
       - name: public release
-        if: ${{ env.CREATE_RELEASE == 'true' }}
+        if: ${{ env.CREATE_XPOSED_RELEASE == 'true' }}
         uses: eregon/publish-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.XPOSED_UPLOAD_TOKEN }}
         with:
           release_id: ${{ steps.xposed_create_release.outputs.id }}
 
