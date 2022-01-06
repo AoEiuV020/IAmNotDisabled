@@ -143,7 +143,7 @@ jobs:
           asset_content_type: application/zip
       - name: public release
         if: ${{ env.CREATE_RELEASE == 'true' }}
-        uses: eregon/publish-release@v1
+        uses: AoEiuV020/publish-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -186,10 +186,12 @@ jobs:
           asset_content_type: application/zip
       - name: public release
         if: ${{ env.CREATE_XPOSED_RELEASE == 'true' }}
-        uses: eregon/publish-release@v1
+        uses: AoEiuV020/publish-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.XPOSED_UPLOAD_TOKEN }}
         with:
+          owner: Xposed-Modules-Repo
+          repo: cc.aoeiuv020.iamnotdisabled.hook
           release_id: ${{ steps.xposed_create_release.outputs.id }}
 
       - name: Send commit to telegram
