@@ -158,6 +158,7 @@ jobs:
         with:
           owner: Xposed-Modules-Repo
           repo: cc.aoeiuv020.iamnotdisabled.hook
+          commitish: main
           tag_name: ${{ env.BUILD_VERSION }}
           release_name: ${{ env.BUILD_VERSION }}
           body: ${{ env.RELEASE_BODY }}
