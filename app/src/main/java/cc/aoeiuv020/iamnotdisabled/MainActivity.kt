@@ -43,10 +43,17 @@ class MainActivity : AppCompatActivity() {
         val serviceList: List<AccessibilityServiceInfo> =
             accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
                 ?: emptyList()
-        return serviceList.map {
+        val nameList = serviceList.map {
             packageManager.getApplicationLabel(it.resolveInfo.serviceInfo.applicationInfo)
                 .toString()
+        }.toMutableList()
+        if (accessibilityManager.isEnabled) {
+            nameList.add("AccessibilityManager.isEnabled")
         }
+        if (accessibilityManager.isTouchExplorationEnabled) {
+            nameList.add("AccessibilityManager.isTouchExplorationEnabled")
+        }
+        return nameList
     }
 
     private fun getFromSettingsSecure(): List<String> {
@@ -54,10 +61,15 @@ class MainActivity : AppCompatActivity() {
             contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         )
-        return if (settingValue.isEmpty()) {
+        val nameList = if (settingValue.isEmpty()) {
             emptyList()
         } else {
             settingValue.split(':')
+        }.toMutableList()
+        val enabled = Settings.Secure.getInt(contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED)
+        if (enabled != 0) {
+            nameList.add("ACCESSIBILITY_ENABLED == $enabled")
         }
+        return nameList
     }
 }
