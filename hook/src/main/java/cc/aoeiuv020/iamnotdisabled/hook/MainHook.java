@@ -1,7 +1,9 @@
 package cc.aoeiuv020.iamnotdisabled.hook;
 
 import android.content.ContentResolver;
+import android.os.Handler;
 import android.provider.Settings;
+import android.view.accessibility.AccessibilityManager;
 
 import java.util.Collections;
 
@@ -58,6 +60,36 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                 null,
                 "isTouchExplorationEnabled",
                 XC_MethodReplacement.returnConstant(false)
+        );
+        XposedHelpers.findAndHookMethod(
+                "android.view.accessibility.AccessibilityManager",
+                null,
+                "addAccessibilityStateChangeListener",
+                AccessibilityManager.AccessibilityStateChangeListener.class,
+                XC_MethodReplacement.returnConstant(true)
+        );
+        XposedHelpers.findAndHookMethod(
+                "android.view.accessibility.AccessibilityManager",
+                null,
+                "addAccessibilityStateChangeListener",
+                AccessibilityManager.AccessibilityStateChangeListener.class,
+                Handler.class,
+                XC_MethodReplacement.returnConstant(null)
+        );
+        XposedHelpers.findAndHookMethod(
+                "android.view.accessibility.AccessibilityManager",
+                null,
+                "addTouchExplorationStateChangeListener",
+                AccessibilityManager.TouchExplorationStateChangeListener.class,
+                XC_MethodReplacement.returnConstant(true)
+        );
+        XposedHelpers.findAndHookMethod(
+                "android.view.accessibility.AccessibilityManager",
+                null,
+                "addTouchExplorationStateChangeListener",
+                AccessibilityManager.TouchExplorationStateChangeListener.class,
+                Handler.class,
+                XC_MethodReplacement.returnConstant(null)
         );
     }
 }
