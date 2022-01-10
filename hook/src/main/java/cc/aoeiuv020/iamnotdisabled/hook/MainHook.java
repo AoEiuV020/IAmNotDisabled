@@ -46,7 +46,9 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
             StackTraceElement stackTraceElement = throwable.getStackTrace()[i];
             if (i == 3 && (
                     stackTraceElement.getClassName().startsWith("android.")
+                            || stackTraceElement.getClassName().startsWith("androidx.")
                             || stackTraceElement.getClassName().startsWith("com.android.")
+                            || stackTraceElement.getClassName().startsWith("org.chromium.content.browser.")
             )) {
                 return true;
             }
