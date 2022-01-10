@@ -3,6 +3,8 @@ package cc.aoeiuv020.iamnotdisabled.hook;
 import android.content.ContentResolver;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.TextUtils;
+import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 
 import java.util.Collections;
@@ -25,18 +27,42 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
         XposedBridge.log("handleLoadPackage: " + lpparam.processName);
         XposedHelpers.findAndHookMethod("android.provider.Settings$Secure", lpparam.classLoader, "getString", ContentResolver.class, String.class, new XC_MethodHook() {
             protected void beforeHookedMethod(MethodHookParam methodHookParam2) throws Throwable {
-                if (Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES.equals((String) methodHookParam2.args[1])) {
+                if (Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES.equals(methodHookParam2.args[1])) {
                     methodHookParam2.setResult("");
                 }
             }
         });
         XposedHelpers.findAndHookMethod("android.provider.Settings$Secure", lpparam.classLoader, "getInt", ContentResolver.class, String.class, new XC_MethodHook() {
             protected void beforeHookedMethod(MethodHookParam methodHookParam2) throws Throwable {
-                if (Settings.Secure.ACCESSIBILITY_ENABLED.equals((String) methodHookParam2.args[1])) {
+                if (Settings.Secure.ACCESSIBILITY_ENABLED.equals(methodHookParam2.args[1])) {
                     methodHookParam2.setResult(0);
                 }
             }
         });
+    }
+
+    private boolean doNotHack(Throwable throwable) {
+        for (int i = 0; i < throwable.getStackTrace().length; i++) {
+            StackTraceElement stackTraceElement = throwable.getStackTrace()[i];
+            if (i == 3 && (
+                    stackTraceElement.getClassName().startsWith("android.")
+                            || stackTraceElement.getClassName().startsWith("com.android.")
+            )) {
+                return true;
+            }
+            try {
+                Class<?> clazz = Class.forName(stackTraceElement.getClassName());
+                if (View.class.isAssignableFrom(clazz)
+                        && (TextUtils.equals(stackTraceElement.getMethodName(), "<init>")
+                        || TextUtils.equals(stackTraceElement.getMethodName(), "layout")
+                        || TextUtils.equals(stackTraceElement.getMethodName(), "setVisibility")
+                        || TextUtils.equals(stackTraceElement.getMethodName(), "notifyViewAccessibilityStateChangedIfNeeded"))) {
+                    return true;
+                }
+            } catch (ClassNotFoundException ignore) {
+            }
+        }
+        return false;
     }
 
     @Override
@@ -53,13 +79,29 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                 "android.view.accessibility.AccessibilityManager",
                 null,
                 "isEnabled",
-                XC_MethodReplacement.returnConstant(false)
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Throwable throwable = new Throwable();
+                        if (doNotHack(throwable)) return;
+                        XposedBridge.log(throwable);
+                        param.setResult(false);
+                    }
+                }
         );
         XposedHelpers.findAndHookMethod(
                 "android.view.accessibility.AccessibilityManager",
                 null,
                 "isTouchExplorationEnabled",
-                XC_MethodReplacement.returnConstant(false)
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Throwable throwable = new Throwable();
+                        if (doNotHack(throwable)) return;
+                        XposedBridge.log(throwable);
+                        param.setResult(false);
+                    }
+                }
         );
         XposedHelpers.findAndHookMethod(
                 "android.view.accessibility.AccessibilityManager",
