@@ -3,8 +3,6 @@ package cc.aoeiuv020.iamnotdisabled.hook;
 import android.content.ContentResolver;
 import android.os.Handler;
 import android.provider.Settings;
-import android.text.TextUtils;
-import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 
 import java.util.Collections;
@@ -42,16 +40,12 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     }
 
     private boolean doNotHack(Throwable throwable) {
-        for (int i = 0; i < throwable.getStackTrace().length; i++) {
-            StackTraceElement stackTraceElement = throwable.getStackTrace()[i];
-            if (i == 3 && (
-                    stackTraceElement.getClassName().startsWith("android.")
-                            || stackTraceElement.getClassName().startsWith("androidx.")
-                            || stackTraceElement.getClassName().startsWith("com.android.")
-                            || stackTraceElement.getClassName().startsWith("org.chromium.content.browser.")
-            )) {
-                return true;
-            }
+        if (throwable.getStackTrace().length >= 3) {
+            StackTraceElement stackTraceElement = throwable.getStackTrace()[3];
+            return stackTraceElement.getClassName().startsWith("android.")
+                    || stackTraceElement.getClassName().startsWith("androidx.")
+                    || stackTraceElement.getClassName().startsWith("com.android.")
+                    || stackTraceElement.getClassName().startsWith("org.chromium.content.browser.");
         }
         return false;
     }
