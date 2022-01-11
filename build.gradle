@@ -2,7 +2,7 @@
 buildscript {
     ext {
         versionCode=1
-        versionName='6.3'
+        versionName='6.4'
     }
     repositories {
         google()
