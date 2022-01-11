@@ -52,17 +52,6 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
             )) {
                 return true;
             }
-            try {
-                Class<?> clazz = Class.forName(stackTraceElement.getClassName());
-                if (View.class.isAssignableFrom(clazz)
-                        && (TextUtils.equals(stackTraceElement.getMethodName(), "<init>")
-                        || TextUtils.equals(stackTraceElement.getMethodName(), "layout")
-                        || TextUtils.equals(stackTraceElement.getMethodName(), "setVisibility")
-                        || TextUtils.equals(stackTraceElement.getMethodName(), "notifyViewAccessibilityStateChangedIfNeeded"))) {
-                    return true;
-                }
-            } catch (ClassNotFoundException ignore) {
-            }
         }
         return false;
     }
@@ -86,7 +75,6 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Throwable throwable = new Throwable();
                         if (doNotHack(throwable)) return;
-                        XposedBridge.log(throwable);
                         param.setResult(false);
                     }
                 }
@@ -100,7 +88,6 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Throwable throwable = new Throwable();
                         if (doNotHack(throwable)) return;
-                        XposedBridge.log(throwable);
                         param.setResult(false);
                     }
                 }
