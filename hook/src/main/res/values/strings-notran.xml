@@ -3,5 +3,6 @@
     <string-array name="xposed_scope">
         <item>cc.aoeiuv020.iamnotdisabled</item>
         <item>com.android.chrome</item>
+        <item>com.google.android.inputmethod.latin</item>
     </string-array>
 </resources>
