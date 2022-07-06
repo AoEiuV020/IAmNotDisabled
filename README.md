@@ -4,6 +4,8 @@
 [![CI](https://github.com/AoEiuV020/IAmNotDisabled/actions/workflows/main.yml/badge.svg)](https://github.com/AoEiuV020/IAmNotDisabled/actions/workflows/main.yml)
 [![img](https://img.shields.io/github/v/release/AoEiuV020/IAmNotDisabled.svg)](https://github.com/AoEiuV020/IAmNotDisabled/releases)
 
+## ！！！本项目并非反反作弊用途，只针对善意的无障碍检测，不保证对反作弊检测有效！！！
+
 起因：[https://www.v2ex.com/t/826317](https://www.v2ex.com/t/826317)  
 使用无障碍服务会被部分app特殊对待，  
 然而有可能使用了无障碍只是为了便利，并不希望被优待，  
