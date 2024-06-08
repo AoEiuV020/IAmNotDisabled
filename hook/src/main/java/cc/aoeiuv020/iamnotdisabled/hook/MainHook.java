@@ -42,6 +42,9 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private boolean doNotHack(Throwable throwable) {
         if (throwable.getStackTrace().length >= 3) {
             StackTraceElement stackTraceElement = throwable.getStackTrace()[3];
+            if (stackTraceElement.getClassName().startsWith("LSPHooker_")) {
+                stackTraceElement = throwable.getStackTrace()[4];
+            }
             return stackTraceElement.getClassName().startsWith("android.")
                     || stackTraceElement.getClassName().startsWith("androidx.")
                     || stackTraceElement.getClassName().startsWith("com.android.")
